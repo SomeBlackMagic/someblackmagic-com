@@ -159,7 +159,14 @@ const CSS = `
   .comments-title { font-size: 1.1rem; font-weight: 600; margin-bottom: 1.5rem; }
 `
 
-function layout(locale: Locale, title: string, content: string, currentPath: string, activeCategory = ''): string {
+const SITE_URL = 'https://someblackmagic.com'
+
+interface LayoutMeta {
+  description?: string
+  ogImage?: string
+}
+
+function layout(locale: Locale, title: string, content: string, currentPath: string, activeCategory = '', meta: LayoutMeta = {}): string {
   const t = i18n[locale]
   const categories = getCategories(locale)
 
@@ -178,6 +185,10 @@ function layout(locale: Locale, title: string, content: string, currentPath: str
     .join('')
 
   const altUrl = switchLocaleUrl(currentPath, locale)
+  const canonicalUrl = `${SITE_URL}${currentPath}`
+  const altAbsUrl = `${SITE_URL}${altUrl}`
+  const description = meta.description ?? t.siteDescription
+  const ogImage = meta.ogImage ?? `${SITE_URL}/icon-512x512.png`
 
   return `<!DOCTYPE html>
 <html lang="${t.htmlLang}">
@@ -185,9 +196,25 @@ function layout(locale: Locale, title: string, content: string, currentPath: str
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>${escHtml(title)}</title>
-  <meta name="description" content="${escHtml(title)}" />
-  <link rel="alternate" hreflang="${LANG_CODE[locale]}" href="${escHtml(currentPath)}" />
-  <link rel="alternate" hreflang="${LANG_CODE[locale === 'en' ? 'ua' : 'en']}" href="${escHtml(altUrl)}" />
+  <meta name="description" content="${escHtml(description)}" />
+  <link rel="canonical" href="${canonicalUrl}" />
+  <link rel="alternate" hreflang="${LANG_CODE[locale]}" href="${canonicalUrl}" />
+  <link rel="alternate" hreflang="${LANG_CODE[locale === 'en' ? 'ua' : 'en']}" href="${altAbsUrl}" />
+  <link rel="alternate" hreflang="x-default" href="${SITE_URL}/en" />
+  <!-- Open Graph -->
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="SomeBlackMagic" />
+  <meta property="og:title" content="${escHtml(title)}" />
+  <meta property="og:description" content="${escHtml(description)}" />
+  <meta property="og:url" content="${canonicalUrl}" />
+  <meta property="og:image" content="${ogImage}" />
+  <meta property="og:locale" content="${t.htmlLang}" />
+  <!-- Twitter / X -->
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="${escHtml(title)}" />
+  <meta name="twitter:description" content="${escHtml(description)}" />
+  <meta name="twitter:image" content="${ogImage}" />
+  <!-- Favicon -->
   <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
   <link rel="icon" href="/favicon.ico" sizes="32x32" />
   <link rel="icon" href="/favicon-96x96.png" sizes="96x96" type="image/png" />
@@ -271,7 +298,7 @@ export function renderCategory(locale: Locale, cat: Category, catPosts: Post[], 
       </div>
     </main>`
 
-  return layout(locale, `${cat.name} — SomeBlackMagic`, html, currentPath, cat.slug)
+  return layout(locale, `${cat.name} — SomeBlackMagic`, html, currentPath, cat.slug, { description: cat.description })
 }
 
 export function renderPost(locale: Locale, post: Post, cat: Category, bodyHtml: string, currentPath: string): string {
@@ -293,7 +320,7 @@ export function renderPost(locale: Locale, post: Post, cat: Category, bodyHtml: 
       </div>
     </main>`
 
-  return layout(locale, `${post.title} — SomeBlackMagic`, html, currentPath, post.category)
+  return layout(locale, `${post.title} — SomeBlackMagic`, html, currentPath, post.category, { description: post.description || post.title })
 }
 
 export function renderAbout(locale: Locale, currentPath: string): string {

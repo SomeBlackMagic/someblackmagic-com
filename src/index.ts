@@ -1,9 +1,11 @@
 import { Hono } from 'hono'
 import { marked } from 'marked'
 import { posts } from './posts-data'
-import { LOCALE_SET, detectLocale, type Locale } from './locales'
-import { CATEGORY_SLUG_SET, getCategory } from './categories'
+import { LOCALES, LOCALE_SET, detectLocale, type Locale, LANG_CODE } from './locales'
+import { CATEGORY_SLUGS, CATEGORY_SLUG_SET, getCategory } from './categories'
 import { renderHome, renderCategory, renderPost, renderAbout, render404 } from './template'
+
+const SITE_URL = 'https://someblackmagic.com'
 
 const app = new Hono()
 
@@ -16,6 +18,33 @@ app.get('/', (c) => {
 function parseLocale(raw: string): Locale | null {
   return LOCALE_SET.has(raw) ? (raw as Locale) : null
 }
+
+// Sitemap
+app.get('/sitemap.xml', (c) => {
+  const urls: string[] = []
+
+  for (const locale of LOCALES) {
+    urls.push(`${SITE_URL}/${locale}`)
+    urls.push(`${SITE_URL}/${locale}/about`)
+    for (const cat of CATEGORY_SLUGS) {
+      urls.push(`${SITE_URL}/${locale}/${cat}`)
+    }
+  }
+
+  for (const post of posts) {
+    urls.push(`${SITE_URL}/${post.locale}/${post.category}/${post.slug}`)
+  }
+
+  const xml = `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml">
+${urls.map(url => `  <url>
+    <loc>${url}</loc>
+  </url>`).join('\n')}
+</urlset>`
+
+  return c.body(xml, 200, { 'Content-Type': 'application/xml; charset=utf-8' })
+})
 
 app.get('/:locale', (c) => {
   const locale = parseLocale(c.req.param('locale'))
