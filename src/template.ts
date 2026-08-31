@@ -3,33 +3,24 @@ import type { Locale } from './locales'
 import { i18n, switchLocaleUrl, LANG_CODE } from './locales'
 import { getCategories, type Category } from './categories'
 
-const GISCUS_REPO = 'SomeBlackMagic/someblackmagic-com'
-const GISCUS_CATEGORY = 'Announcements'
-
-export interface GiscusConfig {
-  repoId: string
-  categoryId: string
-}
-
-function giscusWidget(locale: Locale, giscus: GiscusConfig): string {
-  if (!giscus.repoId || !giscus.categoryId) return ''
+function giscusWidget(locale: Locale): string {
   const t = i18n[locale]
+  const lang = locale === 'ua' ? 'uk' : 'en'
   return `
   <section class="comments">
     <h2 class="comments-title">${t.comments}</h2>
     <script src="https://giscus.app/client.js"
-      data-repo="${GISCUS_REPO}"
-      data-repo-id="${giscus.repoId}"
-      data-category="${GISCUS_CATEGORY}"
-      data-category-id="${giscus.categoryId}"
+      data-repo="someblackMagic/someblackmagic-com"
+      data-repo-id="R_kgDOUJ8TAw"
+      data-category="General"
+      data-category-id="DIC_kwDOUJ8TA84DElv2"
       data-mapping="pathname"
       data-strict="0"
       data-reactions-enabled="1"
       data-emit-metadata="0"
-      data-input-position="top"
-      data-theme="dark"
-      data-lang="${locale}"
-      data-loading="lazy"
+      data-input-position="bottom"
+      data-theme="preferred_color_scheme"
+      data-lang="${lang}"
       crossorigin="anonymous"
       async>
     </script>
@@ -283,7 +274,7 @@ export function renderCategory(locale: Locale, cat: Category, catPosts: Post[], 
   return layout(locale, `${cat.name} — SomeBlackMagic`, html, currentPath, cat.slug)
 }
 
-export function renderPost(locale: Locale, post: Post, cat: Category, bodyHtml: string, currentPath: string, giscus: GiscusConfig): string {
+export function renderPost(locale: Locale, post: Post, cat: Category, bodyHtml: string, currentPath: string): string {
   const t = i18n[locale]
   const html = `
     <main>
@@ -298,7 +289,7 @@ export function renderPost(locale: Locale, post: Post, cat: Category, bodyHtml: 
           </div>
         </header>
         <div class="article-body">${bodyHtml}</div>
-        ${giscusWidget(locale, giscus)}
+        ${giscusWidget(locale)}
       </div>
     </main>`
 

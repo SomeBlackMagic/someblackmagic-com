@@ -3,24 +3,9 @@ import { marked } from 'marked'
 import { posts } from './posts-data'
 import { LOCALE_SET, detectLocale, type Locale } from './locales'
 import { CATEGORY_SLUG_SET, getCategory } from './categories'
-import { renderHome, renderCategory, renderPost, renderAbout, render404, type GiscusConfig } from './template'
+import { renderHome, renderCategory, renderPost, renderAbout, render404 } from './template'
 
-type Env = {
-  Bindings: {
-    GISCUS_REPO_ID?: string
-    GISCUS_CATEGORY_ID?: string
-  }
-}
-
-const app = new Hono<Env>()
-
-// Temporary debug route — remove after debugging
-app.get('/_debug/env', (c) => {
-  return c.json({
-    GISCUS_REPO_ID: c.env.GISCUS_REPO_ID ? `set (${c.env.GISCUS_REPO_ID.length} chars)` : 'MISSING',
-    GISCUS_CATEGORY_ID: c.env.GISCUS_CATEGORY_ID ? `set (${c.env.GISCUS_CATEGORY_ID.length} chars)` : 'MISSING',
-  })
-})
+const app = new Hono()
 
 // Root: detect locale and redirect
 app.get('/', (c) => {
@@ -65,11 +50,7 @@ app.get('/:locale/:category/:slug', async (c) => {
   if (!post) return c.html(render404(locale), 404)
   const cat = getCategory(categorySlug, locale)!
   const bodyHtml = await marked.parse(post.content)
-  const giscus: GiscusConfig = {
-    repoId: c.env.GISCUS_REPO_ID ?? '',
-    categoryId: c.env.GISCUS_CATEGORY_ID ?? '',
-  }
-  return c.html(renderPost(locale, post, cat, bodyHtml, c.req.path, giscus))
+  return c.html(renderPost(locale, post, cat, bodyHtml, c.req.path))
 })
 
 app.notFound((c) => {
