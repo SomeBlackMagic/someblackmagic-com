@@ -14,6 +14,14 @@ type Env = {
 
 const app = new Hono<Env>()
 
+// Temporary debug route — remove after debugging
+app.get('/_debug/env', (c) => {
+  return c.json({
+    GISCUS_REPO_ID: c.env.GISCUS_REPO_ID ? `set (${c.env.GISCUS_REPO_ID.length} chars)` : 'MISSING',
+    GISCUS_CATEGORY_ID: c.env.GISCUS_CATEGORY_ID ? `set (${c.env.GISCUS_CATEGORY_ID.length} chars)` : 'MISSING',
+  })
+})
+
 // Root: detect locale and redirect
 app.get('/', (c) => {
   const locale = detectLocale(c.req.header('Accept-Language') ?? null)

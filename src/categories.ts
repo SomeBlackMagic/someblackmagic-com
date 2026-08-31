@@ -9,19 +9,19 @@ export interface Category {
 const CATEGORY_DEFS: Record<string, Record<Locale, Omit<Category, 'slug'>>> = {
   iot: {
     en: { name: 'IoT', description: 'Sensors, Home Assistant and home automation' },
-    uk: { name: 'IoT', description: 'Датчики, Home Assistant та домашня автоматизація' },
+    ua: { name: 'IoT', description: 'Датчики, Home Assistant та домашня автоматизація' },
   },
   saltstack: {
     en: { name: 'SaltStack', description: 'Configuration management and infrastructure automation' },
-    uk: { name: 'SaltStack', description: 'Управління конфігураціями та автоматизація інфраструктури' },
+    ua: { name: 'SaltStack', description: 'Управління конфігураціями та автоматизація інфраструктури' },
   },
   kubernetes: {
     en: { name: 'Kubernetes', description: 'Container orchestration and cloud-native' },
-    uk: { name: 'Kubernetes', description: 'Оркестрація контейнерів та cloud-native' },
+    ua: { name: 'Kubernetes', description: 'Оркестрація контейнерів та cloud-native' },
   },
   blog: {
     en: { name: 'Blog', description: 'Everything else' },
-    uk: { name: 'Блог', description: 'Все інше' },
+    ua: { name: 'Блог', description: 'Все інше' },
   },
 }
 
