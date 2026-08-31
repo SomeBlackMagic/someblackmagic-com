@@ -1,0 +1,21 @@
+{
+  "name": "someblackmagic-com",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "build": "node scripts/generate-icons.mjs && node scripts/build-posts.mjs",
+    "dev": "npm run build && wrangler dev",
+    "deploy": "npm run build && wrangler deploy",
+    "new-post": "node scripts/new-post.mjs"
+  },
+  "dependencies": {
+    "hono": "^4.6.0",
+    "marked": "^14.0.0"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20241022.0",
+    "sharp": "^0.33.5",
+    "typescript": "^5.5.0",
+    "wrangler": "^3.80.0"
+  }
+}

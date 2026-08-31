@@ -1,0 +1,13 @@
+node_modules/
+.wrangler/
+dist/
+src/posts-data.ts
+
+# Generated favicon assets (created by scripts/generate-icons.mjs)
+public/favicon.ico
+public/favicon-16x16.png
+public/favicon-32x32.png
+public/favicon-96x96.png
+public/apple-touch-icon.png
+public/icon-192x192.png
+public/icon-512x512.png

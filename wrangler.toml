@@ -1,0 +1,10 @@
+name = "someblackmagic-com"
+main = "src/index.ts"
+compatibility_date = "2025-09-01"
+compatibility_flags = ["nodejs_compat"]
+
+[assets]
+directory = "./public"
+
+[observability]
+enabled = true
