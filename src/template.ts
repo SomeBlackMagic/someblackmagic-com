@@ -1,25 +1,27 @@
 import type { Post } from './posts-data'
 import type { Locale } from './locales'
-import { i18n, switchLocaleUrl } from './locales'
+import { i18n, switchLocaleUrl, LANG_CODE } from './locales'
 import { getCategories, type Category } from './categories'
 
-// Configure giscus: https://giscus.app/
 const GISCUS_REPO = 'SomeBlackMagic/someblackmagic-com'
-const GISCUS_REPO_ID = ''
 const GISCUS_CATEGORY = 'Announcements'
-const GISCUS_CATEGORY_ID = ''
 
-function giscusWidget(locale: Locale): string {
-  if (!GISCUS_REPO_ID || !GISCUS_CATEGORY_ID) return ''
+export interface GiscusConfig {
+  repoId: string
+  categoryId: string
+}
+
+function giscusWidget(locale: Locale, giscus: GiscusConfig): string {
+  if (!giscus.repoId || !giscus.categoryId) return ''
   const t = i18n[locale]
   return `
   <section class="comments">
     <h2 class="comments-title">${t.comments}</h2>
     <script src="https://giscus.app/client.js"
       data-repo="${GISCUS_REPO}"
-      data-repo-id="${GISCUS_REPO_ID}"
+      data-repo-id="${giscus.repoId}"
       data-category="${GISCUS_CATEGORY}"
-      data-category-id="${GISCUS_CATEGORY_ID}"
+      data-category-id="${giscus.categoryId}"
       data-mapping="pathname"
       data-strict="0"
       data-reactions-enabled="1"
@@ -193,8 +195,8 @@ function layout(locale: Locale, title: string, content: string, currentPath: str
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>${escHtml(title)}</title>
   <meta name="description" content="${escHtml(title)}" />
-  <link rel="alternate" hreflang="${locale}" href="${escHtml(currentPath)}" />
-  <link rel="alternate" hreflang="${locale === 'en' ? 'uk' : 'en'}" href="${escHtml(altUrl)}" />
+  <link rel="alternate" hreflang="${LANG_CODE[locale]}" href="${escHtml(currentPath)}" />
+  <link rel="alternate" hreflang="${LANG_CODE[locale === 'en' ? 'ua' : 'en']}" href="${escHtml(altUrl)}" />
   <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
   <link rel="icon" href="/favicon.ico" sizes="32x32" />
   <link rel="icon" href="/favicon-96x96.png" sizes="96x96" type="image/png" />
@@ -281,7 +283,7 @@ export function renderCategory(locale: Locale, cat: Category, catPosts: Post[], 
   return layout(locale, `${cat.name} — SomeBlackMagic`, html, currentPath, cat.slug)
 }
 
-export function renderPost(locale: Locale, post: Post, cat: Category, bodyHtml: string, currentPath: string): string {
+export function renderPost(locale: Locale, post: Post, cat: Category, bodyHtml: string, currentPath: string, giscus: GiscusConfig): string {
   const t = i18n[locale]
   const html = `
     <main>
@@ -296,7 +298,7 @@ export function renderPost(locale: Locale, post: Post, cat: Category, bodyHtml: 
           </div>
         </header>
         <div class="article-body">${bodyHtml}</div>
-        ${giscusWidget(locale)}
+        ${giscusWidget(locale, giscus)}
       </div>
     </main>`
 

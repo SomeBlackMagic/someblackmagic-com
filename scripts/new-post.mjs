@@ -1,7 +1,7 @@
 import fs from 'fs'
 import path from 'path'
 
-const VALID_LOCALES = ['en', 'uk']
+const VALID_LOCALES = ['en', 'ua']
 const VALID_CATEGORIES = ['iot', 'saltstack', 'kubernetes', 'blog']
 
 const [, , locale, category, ...titleParts] = process.argv

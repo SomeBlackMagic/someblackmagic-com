@@ -1,8 +1,16 @@
-export const LOCALES = ['en', 'uk'] as const
+// URL slugs: /en/... and /ua/...
+export const LOCALES = ['en', 'ua'] as const
 export type Locale = typeof LOCALES[number]
 export const LOCALE_SET = new Set<string>(LOCALES)
 
 export const DEFAULT_LOCALE: Locale = 'en'
+
+// ISO 639-1 language codes used in <html lang> and hreflang
+// 'ua' is the country code — the correct language code for Ukrainian is 'uk'
+export const LANG_CODE: Record<Locale, string> = {
+  en: 'en',
+  ua: 'uk',
+}
 
 interface I18n {
   htmlLang: string
@@ -36,7 +44,7 @@ export const i18n: Record<Locale, I18n> = {
     siteDescription: 'Notes on IoT, SaltStack, Kubernetes, and everything else.',
     switchLang: 'UA',
   },
-  uk: {
+  ua: {
     htmlLang: 'uk',
     home: 'Головна',
     about: 'Про мене',
@@ -58,14 +66,14 @@ export function detectLocale(acceptLanguage: string | null): Locale {
   if (!acceptLanguage) return DEFAULT_LOCALE
   const parts = acceptLanguage.toLowerCase().split(',').map(p => p.split(';')[0].trim())
   for (const part of parts) {
-    if (part === 'uk' || part.startsWith('uk-')) return 'uk'
+    if (part === 'uk' || part.startsWith('uk-')) return 'ua'
     if (part === 'en' || part.startsWith('en-')) return 'en'
   }
   return DEFAULT_LOCALE
 }
 
-/** Switch locale: /en/foo → /uk/foo */
+/** Switch locale: /en/foo → /ua/foo */
 export function switchLocaleUrl(currentPath: string, currentLocale: Locale): string {
-  const other: Locale = currentLocale === 'en' ? 'uk' : 'en'
+  const other: Locale = currentLocale === 'en' ? 'ua' : 'en'
   return `/${other}${currentPath.slice(`/${currentLocale}`.length) || ''}`
 }

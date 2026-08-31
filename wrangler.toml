@@ -6,5 +6,9 @@ compatibility_flags = ["nodejs_compat"]
 [assets]
 directory = "./public"
 
+# Secrets (set via: wrangler secret put GISCUS_REPO_ID)
+# GISCUS_REPO_ID
+# GISCUS_CATEGORY_ID
+
 [observability]
 enabled = true

@@ -4,7 +4,7 @@ import path from 'path'
 const postsDir = './content/posts'
 const outputFile = './src/posts-data.ts'
 
-const VALID_LOCALES = ['en', 'uk']
+const VALID_LOCALES = ['en', 'ua']
 const VALID_CATEGORIES = ['iot', 'saltstack', 'kubernetes', 'blog']
 
 function parseFrontmatter(content) {
