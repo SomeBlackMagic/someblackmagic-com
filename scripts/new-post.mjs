@@ -36,6 +36,7 @@ const file = path.join(dir, `${date}-${slug}.md`)
 const template = `---
 title: ${title}
 date: ${date}
+translationKey: ${slug}
 description:
 tags:
 ---

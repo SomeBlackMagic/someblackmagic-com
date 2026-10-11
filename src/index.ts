@@ -1,13 +1,26 @@
 import { Hono } from 'hono'
 import { marked } from 'marked'
 import { posts } from './posts-data'
-import { LOCALES, LOCALE_SET, detectLocale, type Locale, LANG_CODE } from './locales'
+import { LOCALES, LOCALE_SET, detectLocale, type Locale } from './locales'
 import { CATEGORY_SLUGS, CATEGORY_SLUG_SET, getCategory } from './categories'
-import { renderHome, renderCategory, renderPost, renderAbout, render404 } from './template'
+import { renderHome, renderCategory, renderPost, renderAbout, render404, type GiscusConfig } from './template'
 
 const SITE_URL = 'https://someblackmagic.com'
 
-const app = new Hono()
+type Bindings = {
+  GISCUS_REPO?: string
+  GISCUS_REPO_ID?: string
+  GISCUS_CATEGORY?: string
+  GISCUS_CATEGORY_ID?: string
+}
+
+function giscusConfig(env: Bindings): GiscusConfig | null {
+  const { GISCUS_REPO, GISCUS_REPO_ID, GISCUS_CATEGORY, GISCUS_CATEGORY_ID } = env
+  if (!GISCUS_REPO || !GISCUS_REPO_ID || !GISCUS_CATEGORY || !GISCUS_CATEGORY_ID) return null
+  return { repo: GISCUS_REPO, repoId: GISCUS_REPO_ID, category: GISCUS_CATEGORY, categoryId: GISCUS_CATEGORY_ID }
+}
+
+const app = new Hono<{ Bindings: Bindings }>()
 
 // Root: detect locale and redirect
 app.get('/', (c) => {
@@ -79,7 +92,9 @@ app.get('/:locale/:category/:slug', async (c) => {
   if (!post) return c.html(render404(locale), 404)
   const cat = getCategory(categorySlug, locale)!
   const bodyHtml = await marked.parse(post.content)
-  return c.html(renderPost(locale, post, cat, bodyHtml, c.req.path))
+  const translation = posts.find(p => p.locale !== locale && p.translationKey === post.translationKey)
+  const altPath = translation ? `/${translation.locale}/${translation.category}/${translation.slug}` : null
+  return c.html(renderPost(locale, post, cat, bodyHtml, c.req.path, altPath, giscusConfig(c.env)))
 })
 
 app.notFound((c) => {

@@ -3,24 +3,31 @@ import type { Locale } from './locales'
 import { i18n, switchLocaleUrl, LANG_CODE } from './locales'
 import { getCategories, type Category } from './categories'
 
-function giscusWidget(locale: Locale): string {
+export interface GiscusConfig {
+  repo: string
+  repoId: string
+  category: string
+  categoryId: string
+}
+
+function giscusWidget(locale: Locale, giscus: GiscusConfig | null): string {
+  if (!giscus) return ''
   const t = i18n[locale]
-  const lang = locale === 'ua' ? 'uk' : 'en'
   return `
   <section class="comments">
     <h2 class="comments-title">${t.comments}</h2>
     <script src="https://giscus.app/client.js"
-      data-repo="someblackMagic/someblackmagic-com"
-      data-repo-id="R_kgDOUJ8TAw"
-      data-category="General"
-      data-category-id="DIC_kwDOUJ8TA84DElv2"
+      data-repo="${escHtml(giscus.repo)}"
+      data-repo-id="${escHtml(giscus.repoId)}"
+      data-category="${escHtml(giscus.category)}"
+      data-category-id="${escHtml(giscus.categoryId)}"
       data-mapping="pathname"
       data-strict="0"
       data-reactions-enabled="1"
       data-emit-metadata="0"
       data-input-position="bottom"
       data-theme="transparent_dark"
-      data-lang="${lang}"
+      data-lang="${LANG_CODE[locale]}"
       crossorigin="anonymous"
       async>
     </script>
@@ -161,12 +168,23 @@ const CSS = `
 
 const SITE_URL = 'https://someblackmagic.com'
 
-interface LayoutMeta {
+interface LayoutOptions {
+  /** Path of this page; null for pages that must not be canonicalized (404). */
+  path: string | null
+  /** Path of the same page in the other locale; null when no translation exists. */
+  altPath: string | null
+  activeCategory?: string
   description?: string
   ogImage?: string
+  noindex?: boolean
 }
 
-function layout(locale: Locale, title: string, content: string, currentPath: string, activeCategory = '', meta: LayoutMeta = {}): string {
+function otherLocale(locale: Locale): Locale {
+  return locale === 'en' ? 'ua' : 'en'
+}
+
+function layout(locale: Locale, title: string, content: string, opts: LayoutOptions): string {
+  const { path: currentPath, altPath, activeCategory = '' } = opts
   const t = i18n[locale]
   const categories = getCategories(locale)
 
@@ -184,11 +202,26 @@ function layout(locale: Locale, title: string, content: string, currentPath: str
     .map(({ href, label, active }) => `<a href="${href}"${active ? ' class="active"' : ''}>${label}</a>`)
     .join('')
 
-  const altUrl = switchLocaleUrl(currentPath, locale)
-  const canonicalUrl = `${SITE_URL}${currentPath}`
-  const altAbsUrl = `${SITE_URL}${altUrl}`
-  const description = meta.description ?? t.siteDescription
-  const ogImage = meta.ogImage ?? `${SITE_URL}/icon-512x512.png`
+  const other = otherLocale(locale)
+  // Language switch falls back to the other locale's home when there is no translation
+  const switchHref = altPath ?? `/${other}`
+  const description = opts.description ?? t.siteDescription
+  const ogImage = opts.ogImage ?? `${SITE_URL}/icon-512x512.png`
+
+  const seoLinks: string[] = []
+  if (opts.noindex) seoLinks.push('<meta name="robots" content="noindex" />')
+  if (currentPath) {
+    const canonicalUrl = `${SITE_URL}${currentPath}`
+    seoLinks.push(`<link rel="canonical" href="${canonicalUrl}" />`)
+    seoLinks.push(`<meta property="og:url" content="${canonicalUrl}" />`)
+    // hreflang only for pages that actually have a translation
+    if (altPath) {
+      seoLinks.push(`<link rel="alternate" hreflang="${LANG_CODE[locale]}" href="${canonicalUrl}" />`)
+      seoLinks.push(`<link rel="alternate" hreflang="${LANG_CODE[other]}" href="${SITE_URL}${altPath}" />`)
+      const enPath = locale === 'en' ? currentPath : altPath
+      seoLinks.push(`<link rel="alternate" hreflang="x-default" href="${SITE_URL}${enPath}" />`)
+    }
+  }
 
   return `<!DOCTYPE html>
 <html lang="${t.htmlLang}">
@@ -197,16 +230,12 @@ function layout(locale: Locale, title: string, content: string, currentPath: str
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>${escHtml(title)}</title>
   <meta name="description" content="${escHtml(description)}" />
-  <link rel="canonical" href="${canonicalUrl}" />
-  <link rel="alternate" hreflang="${LANG_CODE[locale]}" href="${canonicalUrl}" />
-  <link rel="alternate" hreflang="${LANG_CODE[locale === 'en' ? 'ua' : 'en']}" href="${altAbsUrl}" />
-  <link rel="alternate" hreflang="x-default" href="${SITE_URL}/en" />
+  ${seoLinks.join('\n  ')}
   <!-- Open Graph -->
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="SomeBlackMagic" />
   <meta property="og:title" content="${escHtml(title)}" />
   <meta property="og:description" content="${escHtml(description)}" />
-  <meta property="og:url" content="${canonicalUrl}" />
   <meta property="og:image" content="${ogImage}" />
   <meta property="og:locale" content="${t.htmlLang}" />
   <!-- Twitter / X -->
@@ -231,7 +260,7 @@ function layout(locale: Locale, title: string, content: string, currentPath: str
       <a href="/${locale}" class="site-title">Some<span>BlackMagic</span></a>
       <div class="header-right">
         <nav>${nav}</nav>
-        <div class="lang-switch"><a href="${escHtml(altUrl)}">${t.switchLang}</a></div>
+        <div class="lang-switch"><a href="${escHtml(switchHref)}">${t.switchLang}</a></div>
       </div>
     </div>
   </header>
@@ -278,7 +307,7 @@ export function renderHome(locale: Locale, localePosts: Post[]): string {
       </div>
     </main>`
 
-  return layout(locale, 'SomeBlackMagic', html, `/${locale}`)
+  return layout(locale, 'SomeBlackMagic', html, { path: `/${locale}`, altPath: `/${otherLocale(locale)}` })
 }
 
 export function renderCategory(locale: Locale, cat: Category, catPosts: Post[], currentPath: string): string {
@@ -298,11 +327,23 @@ export function renderCategory(locale: Locale, cat: Category, catPosts: Post[], 
       </div>
     </main>`
 
-  return layout(locale, `${cat.name} — SomeBlackMagic`, html, currentPath, cat.slug, { description: cat.description })
+  return layout(locale, `${cat.name} — SomeBlackMagic`, html, {
+    path: currentPath,
+    altPath: switchLocaleUrl(currentPath, locale),
+    activeCategory: cat.slug,
+    description: cat.description,
+  })
 }
 
-export function renderPost(locale: Locale, post: Post, cat: Category, bodyHtml: string, currentPath: string): string {
-  const t = i18n[locale]
+export function renderPost(
+  locale: Locale,
+  post: Post,
+  cat: Category,
+  bodyHtml: string,
+  currentPath: string,
+  altPath: string | null,
+  giscus: GiscusConfig | null,
+): string {
   const html = `
     <main>
       <div class="container">
@@ -316,11 +357,16 @@ export function renderPost(locale: Locale, post: Post, cat: Category, bodyHtml: 
           </div>
         </header>
         <div class="article-body">${bodyHtml}</div>
-        ${giscusWidget(locale)}
+        ${giscusWidget(locale, giscus)}
       </div>
     </main>`
 
-  return layout(locale, `${post.title} — SomeBlackMagic`, html, currentPath, post.category, { description: post.description || post.title })
+  return layout(locale, `${post.title} — SomeBlackMagic`, html, {
+    path: currentPath,
+    altPath,
+    activeCategory: post.category,
+    description: post.description || post.title,
+  })
 }
 
 export function renderAbout(locale: Locale, currentPath: string): string {
@@ -328,7 +374,7 @@ export function renderAbout(locale: Locale, currentPath: string): string {
 
   const aboutContent: Record<Locale, string> = {
     en: '<p>SomeBlackMagic is a personal blog about software engineering, DevOps, and other things.</p>',
-    uk: '<p>SomeBlackMagic — особистий блог про інженерію програмного забезпечення, DevOps та інше.</p>',
+    ua: '<p>SomeBlackMagic — особистий блог про інженерію програмного забезпечення, DevOps та інше.</p>',
   }
 
   const html = `
@@ -341,7 +387,10 @@ export function renderAbout(locale: Locale, currentPath: string): string {
       </div>
     </main>`
 
-  return layout(locale, `${t.about} — SomeBlackMagic`, html, currentPath)
+  return layout(locale, `${t.about} — SomeBlackMagic`, html, {
+    path: currentPath,
+    altPath: switchLocaleUrl(currentPath, locale),
+  })
 }
 
 export function render404(locale: Locale): string {
@@ -354,7 +403,7 @@ export function render404(locale: Locale): string {
         <a href="/${locale}" style="display:inline-block;margin-top:1.5rem">${t.backToHome}</a>
       </div>
     </main>`
-  return layout(locale, `${t.notFound} — SomeBlackMagic`, html, `/${locale}`)
+  return layout(locale, `${t.notFound} — SomeBlackMagic`, html, { path: null, altPath: null, noindex: true })
 }
 
 function postItem(p: Post, locale: Locale, showCategory: boolean): string {
