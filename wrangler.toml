@@ -3,6 +3,13 @@ main = "src/index.ts"
 compatibility_date = "2025-09-01"
 compatibility_flags = ["nodejs_compat"]
 
+# Generates src/posts-data.ts and icons before bundling. Runs on every
+# wrangler deploy / versions upload / dev, including Cloudflare Workers Builds,
+# which call wrangler directly without `npm run build`.
+[build]
+command = "npm run build"
+watch_dir = ["content", "scripts", "src/categories.ts", "src/index.ts", "src/locales.ts", "src/template.ts", "public/favicon.svg"]
+
 [assets]
 directory = "./public"
 
