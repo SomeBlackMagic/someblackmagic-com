@@ -6,9 +6,13 @@ compatibility_flags = ["nodejs_compat"]
 [assets]
 directory = "./public"
 
-# Secrets (set via: wrangler secret put GISCUS_REPO_ID)
-# GISCUS_REPO_ID
-# GISCUS_CATEGORY_ID
+# Giscus comments (https://giscus.app). These ids are public — they end up in page HTML anyway.
+# Comments are hidden if any of them is missing.
+[vars]
+GISCUS_REPO = "SomeBlackMagic/someblackmagic-com"
+GISCUS_REPO_ID = "R_kgDOUJ8TAw"
+GISCUS_CATEGORY = "General"
+GISCUS_CATEGORY_ID = "DIC_kwDOUJ8TA84DElv2"
 
 [observability]
 enabled = true

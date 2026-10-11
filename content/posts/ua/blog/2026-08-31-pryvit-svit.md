@@ -1,6 +1,7 @@
 ---
 title: Привіт, світ
 date: 2026-08-31
+translationKey: hello-world
 description: Перший пост у блозі SomeBlackMagic.
 tags: meta
 ---
