@@ -5,8 +5,8 @@
   "scripts": {
     "build": "node scripts/generate-icons.mjs && node scripts/build-posts.mjs && npm run typecheck",
     "typecheck": "tsc --noEmit -p .",
-    "dev": "npm run build && wrangler dev",
-    "deploy": "npm run build && wrangler deploy",
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
     "new-post": "node scripts/new-post.mjs"
   },
   "dependencies": {
