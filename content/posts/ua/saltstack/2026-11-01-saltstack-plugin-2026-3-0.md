@@ -1,12 +1,12 @@
 ---
-title: SaltStack-плагін 2026.2.4 — середовища Pillar, ефективні значення та ключі Pillar у Jinja
+title: SaltStack-плагін 2026.3.0 — середовища Pillar, ефективні значення та ключі Pillar у Jinja
 date: 2026-11-01
-translationKey: saltstack-plugin-2026-2-4
+translationKey: saltstack-plugin-2026-3-0
 description: Новий реліз IntelliJ-плагіна для SaltStack — pillar_roots по середовищах і динамічний __env__, порядок застосування та модель злиття Pillar з ефективними значеннями, діагностика перевизначень і невикористаних файлів, навігація й автодоповнення ключів Pillar у Jinja, підтримка Saltfile і Salt Bundle.
 tags: saltstack, intellij, tooling
 ---
 
-Реліз 2026.2.4 [плагіна для SaltStack](https://plugins.jetbrains.com/plugin/30291-saltstack) майже повністю присвячений Pillar. У [2026.2.3](/ua/saltstack/2026-10-18-saltstack-plugin-2026-2-3) IDE навчилася перевіряти окремий Pillar-файл. Тепер вона розуміє Pillar цілком: які файли потрапляють у яке середовище, у якому порядку застосовуються, як зливаються й яке значення ключа отримає міньйон у підсумку. Окремо додано підтримку Saltfile і метаданих Salt Bundle. Нижче про все по черзі.
+Реліз 2026.3.0 [плагіна для SaltStack](https://plugins.jetbrains.com/plugin/30291-saltstack) майже повністю присвячений Pillar. У [2026.2.3](/ua/saltstack/2026-10-18-saltstack-plugin-2026-2-3) IDE навчилася перевіряти окремий Pillar-файл. Тепер вона розуміє Pillar цілком: які файли потрапляють у яке середовище, у якому порядку застосовуються, як зливаються й яке значення ключа отримає міньйон у підсумку. Окремо додано підтримку Saltfile і метаданих Salt Bundle. Нижче про все по черзі.
 
 ## Pillar по середовищах
 
