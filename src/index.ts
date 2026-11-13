@@ -47,6 +47,29 @@ app.use('*', async (c, next) => {
   }
 })
 
+// Legacy URLs (earlier site structures / renamed posts) -> current canonical URLs.
+// Without these, previously crawled URLs end up as 404 in Search Console.
+const RENAMED_PATHS: Record<string, string> = {
+  '/ua/saltstack/2026-11-01-saltstack-plugin-2026-2-4': '/ua/saltstack/2026-11-01-saltstack-plugin-2026-3-0',
+}
+
+app.use('*', async (c, next) => {
+  const path = c.req.path
+  const search = new URL(c.req.url).search
+  let target: string | undefined = RENAMED_PATHS[path]
+  if (!target && (path === '/uk' || path.startsWith('/uk/'))) {
+    target = '/ua' + path.slice(3)
+    target = RENAMED_PATHS[target] ?? target
+  }
+  if (!target && path === '/about') target = '/en/about'
+  if (!target) {
+    const m = path.match(/^\/blog\/([^/]+)$/)
+    if (m) target = `/en/blog/${m[1]}`
+  }
+  if (target) return c.redirect(`${SITE_URL}${target}${search}`, 301)
+  await next()
+})
+
 // Root: detect locale and redirect
 app.get('/', (c) => {
   const locale = detectLocale(c.req.header('Accept-Language') ?? null)
