@@ -56,7 +56,7 @@ export const i18n: Record<Locale, I18n> = {
     backToHome: '← На головну',
     comments: 'Коментарі',
     postsCount: (n) => `${n} ${n % 10 === 1 && n % 100 !== 11 ? 'пост' : n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 10 || n % 100 >= 20) ? 'пости' : 'постів'}`,
-    siteDescription: 'Нотатки про IoT, SaltStack, Kubernetes та інше.',
+    siteDescription: 'Нотатки про IoT, SaltStack, Kubernetes та все інше.',
     switchLang: 'EN',
   },
 }

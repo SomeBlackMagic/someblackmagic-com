@@ -1,5 +1,6 @@
 ---
 title: SLS Is Not a Programming Language. Where SaltStack Logic Belongs
+seoTitle: SLS Is Not a Programming Language — SomeBlackMagic
 date: 2026-11-13
 description: Why SLS should describe desired state instead of implementing deployment algorithms, and how to split logic between SLS, Pillar, utility, execution and state modules, Salt Extensions, and orchestration.
 tags: saltstack, devops, architecture

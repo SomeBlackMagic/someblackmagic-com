@@ -45,12 +45,23 @@ for (const locale of VALID_LOCALES) {
         category,
         translationKey: meta.translationKey || slug.replace(/^\d{4}-\d{2}-\d{2}-/, ''),
         title: meta.title ?? slug,
+        // Optional shorter <title> for search results (H1 keeps the full title)
+        seoTitle: meta.seoTitle ?? '',
         date: meta.date ?? '',
         description: meta.description ?? '',
         tags: meta.tags ? meta.tags.split(',').map(t => t.trim()) : [],
         content: body,
       })
     }
+  }
+}
+
+// Search engines truncate titles at ~60 characters
+const SITE_SUFFIX = ' — SomeBlackMagic'
+for (const p of posts) {
+  const docTitle = p.seoTitle || p.title + SITE_SUFFIX
+  if (docTitle.length > 60) {
+    console.warn(`warning: <title> of ${p.locale}/${p.category}/${p.slug} is ${docTitle.length} chars (>60); add a shorter seoTitle`)
   }
 }
 
@@ -74,6 +85,7 @@ export interface Post {
   locale: string
   category: string
   title: string
+  seoTitle: string
   date: string
   description: string
   tags: string[]

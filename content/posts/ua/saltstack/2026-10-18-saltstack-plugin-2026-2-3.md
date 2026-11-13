@@ -1,5 +1,6 @@
 ---
 title: SaltStack-плагін 2026.2.3 — валідація Pillar, навігація по import_yaml і змінні SLS-контексту
+seoTitle: SaltStack-плагін 2026.2.3: валідація Pillar, import_yaml
 date: 2026-10-18
 translationKey: saltstack-plugin-2026-2-3
 description: Новий реліз IntelliJ-плагіна для SaltStack — перевірка структури й ключів Pillar з урахуванням YAML 1.1, автодоповнення include, навігація по даних з import_yaml/import_json, змінні sls/slspath/tpldir та суворіша перевірка state-файлів.
@@ -108,7 +109,7 @@ Quick Documentation (Ctrl+Q) показує не тільки опис, а й з
 
 ## Під капотом
 
-- Залежність від [Jinja2 Enhanced Support](https://plugins.jetbrains.com/plugin/29804-jinja2-enhanced-suppo) оновлено до 2026.3.2, тож плагін отримує всі покращення [останнього релізу](/ua/saltstack/2026-10-17-jinja2-enhanced-20206-3-2).
+- Залежність від [Jinja2 Enhanced Support](https://plugins.jetbrains.com/plugin/29804-jinja2-enhanced-suppo) оновлено до 2026.3.2, тож плагін отримує всі покращення [останнього релізу](/ua/saltstack/2026-10-17-jinja2-enhanced-2026-3-2).
 - До тестів додано мутаційне тестування PIT, суттєво розширено покриття.
 - Збірка переведена на JDK 25.
 

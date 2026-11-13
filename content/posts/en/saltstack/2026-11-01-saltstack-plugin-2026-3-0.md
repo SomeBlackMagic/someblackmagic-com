@@ -1,5 +1,6 @@
 ---
 title: SaltStack plugin 2026.3.0 — Pillar environments, effective values, and Pillar keys in Jinja
+seoTitle: SaltStack Plugin 2026.3.0: Pillar Environments & Keys
 date: 2026-11-01
 translationKey: saltstack-plugin-2026-3-0
 description: The new release of the IntelliJ plugin for SaltStack — per-environment pillar_roots and dynamic __env__, Pillar application order and a merge model with effective values, override and unused-file diagnostics, navigation and completion for Pillar keys in Jinja, plus Saltfile and Salt Bundle support.

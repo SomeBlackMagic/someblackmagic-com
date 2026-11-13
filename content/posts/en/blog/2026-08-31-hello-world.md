@@ -1,7 +1,7 @@
 ---
 title: Hello World
 date: 2026-08-31
-description: The first post on SomeBlackMagic blog.
+description: The first post on the SomeBlackMagic blog about software engineering and DevOps — what to expect here and how the blog runs on Cloudflare Workers.
 tags: meta
 ---
 

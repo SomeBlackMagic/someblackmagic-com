@@ -1,5 +1,6 @@
 ---
 title: Як ми перестали копіювати Salt-формули між клієнтами
+seoTitle: Як ми перестали копіювати Salt-формули між клієнтами
 date: 2026-08-31
 description: Архітектура SaltStack для multi-tenant SaaS — три рівні відповідальності, які рятують від копіпасти між клієнтськими репозиторіями.
 tags: saltstack, devops, saas, architecture

@@ -2,7 +2,7 @@
 title: Привіт, світ
 date: 2026-08-31
 translationKey: hello-world
-description: Перший пост у блозі SomeBlackMagic.
+description: Перший пост у блозі SomeBlackMagic про інженерію програмного забезпечення та DevOps — що тут буде: інфраструктура, автоматизація, IoT, SaltStack і Kubernetes.
 tags: meta
 ---
 

@@ -1,5 +1,6 @@
 ---
 title: SaltStack-плагін 2026.3.0 — середовища Pillar, ефективні значення та ключі Pillar у Jinja
+seoTitle: SaltStack-плагін 2026.3.0: середовища та ключі Pillar
 date: 2026-11-01
 translationKey: saltstack-plugin-2026-3-0
 description: Новий реліз IntelliJ-плагіна для SaltStack — pillar_roots по середовищах і динамічний __env__, порядок застосування та модель злиття Pillar з ефективними значеннями, діагностика перевизначень і невикористаних файлів, навігація й автодоповнення ключів Pillar у Jinja, підтримка Saltfile і Salt Bundle.

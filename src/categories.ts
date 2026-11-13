@@ -4,24 +4,26 @@ export interface Category {
   slug: string
   name: string
   description: string
+  /** Longer text for <meta name="description">; falls back to description */
+  metaDescription?: string
 }
 
 const CATEGORY_DEFS: Record<string, Record<Locale, Omit<Category, 'slug'>>> = {
   iot: {
-    en: { name: 'IoT', description: 'Sensors, Home Assistant and home automation' },
-    ua: { name: 'IoT', description: 'Датчики, Home Assistant та домашня автоматизація' },
+    en: { name: 'IoT', description: 'Sensors, Home Assistant and home automation', metaDescription: 'Posts about IoT: sensors, Home Assistant and home automation — setups, integrations and practical notes.' },
+    ua: { name: 'IoT', description: 'Датчики, Home Assistant та домашня автоматизація', metaDescription: 'Пости про IoT: датчики, Home Assistant і домашня автоматизація — налаштування, інтеграції та практичні нотатки.' },
   },
   saltstack: {
     en: { name: 'SaltStack', description: 'Configuration management and infrastructure automation' },
     ua: { name: 'SaltStack', description: 'Управління конфігураціями та автоматизація інфраструктури' },
   },
   kubernetes: {
-    en: { name: 'Kubernetes', description: 'Container orchestration and cloud-native' },
-    ua: { name: 'Kubernetes', description: 'Оркестрація контейнерів та cloud-native' },
+    en: { name: 'Kubernetes', description: 'Container orchestration and cloud-native', metaDescription: 'Posts about Kubernetes: container orchestration, cluster operations and cloud-native tooling in practice.' },
+    ua: { name: 'Kubernetes', description: 'Оркестрація контейнерів та cloud-native', metaDescription: 'Пости про Kubernetes: оркестрація контейнерів, експлуатація кластерів і cloud-native інструменти на практиці.' },
   },
   blog: {
-    en: { name: 'Blog', description: 'Everything else' },
-    ua: { name: 'Блог', description: 'Все інше' },
+    en: { name: 'Blog', description: 'Everything else', metaDescription: 'Everything else from SomeBlackMagic: blog news, personal notes and posts that don\'t fit into IoT, SaltStack or Kubernetes.' },
+    ua: { name: 'Блог', description: 'Все інше', metaDescription: 'Все інше від SomeBlackMagic: новини блогу, особисті нотатки та пости, що не вписуються в IoT, SaltStack чи Kubernetes.' },
   },
 }
 

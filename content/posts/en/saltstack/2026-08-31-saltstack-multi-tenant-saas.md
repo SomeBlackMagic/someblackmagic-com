@@ -1,5 +1,6 @@
 ---
 title: How We Stopped Copying Salt Formulas Between Customers
+seoTitle: How We Stopped Copying Salt Formulas Between Customers
 date: 2026-08-31
 description: A SaltStack architecture for multi-tenant SaaS — three layers of responsibility that save you from copy-pasting between customer repos.
 tags: saltstack, devops, saas, architecture

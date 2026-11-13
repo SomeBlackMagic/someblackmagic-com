@@ -1,5 +1,6 @@
 ---
 title: SaltStack plugin 2026.2.3 — Pillar validation, import_yaml navigation, and SLS context variables
+seoTitle: SaltStack Plugin 2026.2.3: Pillar Validation & import_yaml
 date: 2026-10-18
 translationKey: saltstack-plugin-2026-2-3
 description: The new release of the IntelliJ plugin for SaltStack — Pillar structure and key validation with YAML 1.1 semantics, include completion, navigation into import_yaml/import_json data, the sls/slspath/tpldir variables, and stricter checks for state files.
@@ -108,7 +109,7 @@ This part shipped in 2026.2.2 and deserves a mention of its own.
 
 ## Under the hood
 
-- The [Jinja2 Enhanced Support](https://plugins.jetbrains.com/plugin/29804-jinja2-enhanced-suppo) dependency has been updated to 2026.3.2, so the plugin gets all the improvements from its [latest release](/en/saltstack/2026-10-17-jinja2-enhanced-20206-3-2).
+- The [Jinja2 Enhanced Support](https://plugins.jetbrains.com/plugin/29804-jinja2-enhanced-suppo) dependency has been updated to 2026.3.2, so the plugin gets all the improvements from its [latest release](/en/saltstack/2026-10-17-jinja2-enhanced-2026-3-2).
 - PIT mutation testing has been added to the test suite, and coverage has grown significantly.
 - The build has moved to JDK 25.
 

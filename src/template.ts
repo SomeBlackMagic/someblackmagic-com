@@ -331,7 +331,7 @@ export function renderCategory(locale: Locale, cat: Category, catPosts: Post[], 
     path: currentPath,
     altPath: switchLocaleUrl(currentPath, locale),
     activeCategory: cat.slug,
-    description: cat.description,
+    description: cat.metaDescription ?? cat.description,
   })
 }
 
@@ -361,7 +361,7 @@ export function renderPost(
       </div>
     </main>`
 
-  return layout(locale, `${post.title} — SomeBlackMagic`, html, {
+  return layout(locale, post.seoTitle || `${post.title} — SomeBlackMagic`, html, {
     path: currentPath,
     altPath,
     activeCategory: post.category,

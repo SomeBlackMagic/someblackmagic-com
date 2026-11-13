@@ -1,5 +1,6 @@
 ---
 title: SLS — не мова програмування. Де має жити логіка SaltStack
+seoTitle: SLS — не мова програмування — SomeBlackMagic
 date: 2026-11-13
 description: Чому SLS має описувати бажаний стан, а не реалізовувати алгоритми розгортання, і як розподілити логіку між SLS, Pillar, utility-, execution- і state-модулями, Salt Extensions та orchestration.
 tags: saltstack, devops, architecture

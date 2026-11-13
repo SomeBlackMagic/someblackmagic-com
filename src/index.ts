@@ -51,6 +51,8 @@ app.use('*', async (c, next) => {
 // Without these, previously crawled URLs end up as 404 in Search Console.
 const RENAMED_PATHS: Record<string, string> = {
   '/ua/saltstack/2026-11-01-saltstack-plugin-2026-2-4': '/ua/saltstack/2026-11-01-saltstack-plugin-2026-3-0',
+  '/en/saltstack/2026-10-17-jinja2-enhanced-20206-3-2': '/en/saltstack/2026-10-17-jinja2-enhanced-2026-3-2',
+  '/ua/saltstack/2026-10-17-jinja2-enhanced-20206-3-2': '/ua/saltstack/2026-10-17-jinja2-enhanced-2026-3-2',
 }
 
 app.use('*', async (c, next) => {
