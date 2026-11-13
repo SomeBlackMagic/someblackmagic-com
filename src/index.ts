@@ -1,7 +1,7 @@
 import { Hono } from 'hono'
 import { marked } from 'marked'
 import { posts } from './posts-data'
-import { LOCALES, LOCALE_SET, detectLocale, type Locale } from './locales'
+import { LOCALES, LOCALE_SET, LANG_CODE, detectLocale, type Locale } from './locales'
 import { CATEGORY_SLUGS, CATEGORY_SLUG_SET, getCategory } from './categories'
 import { renderHome, renderCategory, renderPost, renderAbout, render404, type GiscusConfig } from './template'
 
@@ -22,6 +22,31 @@ function giscusConfig(env: Bindings): GiscusConfig | null {
 
 const app = new Hono<{ Bindings: Bindings }>()
 
+const CANONICAL_HOST = new URL(SITE_URL).host
+const SITE_HOSTS = new Set([CANONICAL_HOST, `www.${CANONICAL_HOST}`])
+
+// Canonicalize URLs: http -> https, www -> apex, strip trailing slash.
+// Pages declare https://someblackmagic.com/... as canonical; serving other
+// variants with 200 makes search engines report them as "alternate page with
+// proper canonical tag" instead of consolidating on the canonical URL.
+app.use('*', async (c, next) => {
+  const url = new URL(c.req.url)
+  if (SITE_HOSTS.has(url.hostname)) {
+    const forwardedProto = c.req.header('X-Forwarded-Proto')
+    const isHttp = url.protocol === 'http:' || forwardedProto === 'http'
+    const path = url.pathname.length > 1 && url.pathname.endsWith('/')
+      ? url.pathname.replace(/\/+$/, '') || '/'
+      : url.pathname
+    if (isHttp || url.hostname !== CANONICAL_HOST || path !== url.pathname) {
+      return c.redirect(`${SITE_URL}${path}${url.search}`, 301)
+    }
+  }
+  await next()
+  if (SITE_HOSTS.has(url.hostname)) {
+    c.header('Strict-Transport-Security', 'max-age=31536000')
+  }
+})
+
 // Root: detect locale and redirect
 app.get('/', (c) => {
   const locale = detectLocale(c.req.header('Accept-Language') ?? null)
@@ -32,28 +57,47 @@ function parseLocale(raw: string): Locale | null {
   return LOCALE_SET.has(raw) ? (raw as Locale) : null
 }
 
-// Sitemap
+// Sitemap (with hreflang alternates for translated pages)
 app.get('/sitemap.xml', (c) => {
-  const urls: string[] = []
+  // Each entry: list of [locale, path] variants of the same page
+  const groups: Array<Array<[Locale, string]>> = []
 
-  for (const locale of LOCALES) {
-    urls.push(`${SITE_URL}/${locale}`)
-    urls.push(`${SITE_URL}/${locale}/about`)
-    for (const cat of CATEGORY_SLUGS) {
-      urls.push(`${SITE_URL}/${locale}/${cat}`)
-    }
+  groups.push(LOCALES.map(l => [l, `/${l}`]))
+  groups.push(LOCALES.map(l => [l, `/${l}/about`]))
+  for (const cat of CATEGORY_SLUGS) {
+    groups.push(LOCALES.map(l => [l, `/${l}/${cat}`]))
   }
 
+  const seen = new Set<typeof posts[number]>()
   for (const post of posts) {
-    urls.push(`${SITE_URL}/${post.locale}/${post.category}/${post.slug}`)
+    if (seen.has(post)) continue
+    const variants = posts.filter(p => p === post || (p.translationKey === post.translationKey && p.locale !== post.locale))
+    const group: Array<[Locale, string]> = []
+    for (const p of variants) {
+      if (group.some(([l]) => l === p.locale)) continue
+      seen.add(p)
+      group.push([p.locale as Locale, `/${p.locale}/${p.category}/${p.slug}`])
+    }
+    groups.push(group)
+  }
+
+  const entries: string[] = []
+  for (const group of groups) {
+    const alternates = group.length > 1
+      ? [
+          ...group.map(([l, path]) => `    <xhtml:link rel="alternate" hreflang="${LANG_CODE[l]}" href="${SITE_URL}${path}" />`),
+          `    <xhtml:link rel="alternate" hreflang="x-default" href="${SITE_URL}${(group.find(([l]) => l === 'en') ?? group[0])[1]}" />`,
+        ]
+      : []
+    for (const [, path] of group) {
+      entries.push(['  <url>', `    <loc>${SITE_URL}${path}</loc>`, ...alternates, '  </url>'].join('\n'))
+    }
   }
 
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
         xmlns:xhtml="http://www.w3.org/1999/xhtml">
-${urls.map(url => `  <url>
-    <loc>${url}</loc>
-  </url>`).join('\n')}
+${entries.join('\n')}
 </urlset>`
 
   return c.body(xml, 200, { 'Content-Type': 'application/xml; charset=utf-8' })
